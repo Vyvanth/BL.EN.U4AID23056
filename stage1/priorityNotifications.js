@@ -14,9 +14,15 @@ const weights = {
 function getPriority(notification) {
   const weight = weights[notification.Type] || 0;
 
-  const timestamp = new Date(
-    notification.Timestamp
-  ).getTime();
+  const timestampRaw =
+    notification.Timestamp ||
+    notification.Tinestanp ||
+    notification.Tinestamp ||
+    notification.timestamp ||
+    notification.time ||
+    "";
+
+  const timestamp = new Date(timestampRaw).getTime() || 0;
 
   return weight * 1000000000000 + timestamp;
 }
