@@ -3,7 +3,9 @@ import { Log } from "../logging_middleware/logger.js";
 const API_URL =
   "http://20.207.122.201/evaluation-service/notifications";
 
-const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJNYXBDbGFpbXMiOnsiYXVkIjoiaHR0cDovLzIwLjI0NC41Ni4xNDQvZXZhbHVhdGlvbi1zZXJ2aWNlIiwiZW1haWwiOiJ2b2JpbGlzZXR0aXZ5dmFudGgyODExQGdtYWlsLmNvbSIsImV4cCI6MTc3ODA1OTU1NiwiaWF0IjoxNzc4MDU4NjU2LCJpc3MiOiJBZmZvcmQgTWVkaWNhbCBUZWNobm9sb2dpZXMgUHJpdmF0ZSBMaW1pdGVkIiwianRpIjoiNDJhOWI2YTctZmJkMS00ODdmLWE4ZTQtNDNiOTM1Nzg2MzljIiwibG9jYWxlIjoiZW4tSU4iLCJuYW1lIjoidm9iaWxpc2V0dGkgdnl2YW50aCIsInN1YiI6ImNlOGI4ZDQ1LTVhODEtNGI2ZS04NGMxLTMxYmI2NTBkMWFhNCJ9LCJlbWFpbCI6InZvYmlsaXNldHRpdnl2YW50aDI4MTFAZ21haWwuY29tIiwibmFtZSI6InZvYmlsaXNldHRpIHZ5dmFudGgiLCJyb2xsTm8iOiJibC5lbi51NGFpZDIzMDU2IiwiYWNjZXNzQ29kZSI6IlBUQk1tUSIsImNsaWVudElEIjoiY2U4YjhkNDUtNWE4MS00YjZlLTg0YzEtMzFiYjY1MGQxYWE0IiwiY2xpZW50U2VjcmV0IjoiamJFcXZoWHhoenlLWHVlUyJ9._rp0IlvbcZ6ad4eUkxUMvaeLYoe3OCbANBmOMMRni8E";
+const TOKEN =
+  process.env.NOTIFICATION_API_TOKEN ||
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJNYXBDbGFpbXMiOnsiYXVkIjoiaHR0cDovLzIwLjI0NC41Ni4xNDQvZXZhbHVhdWF0aW9uLXNlcnZpY2UiLCJlbWFpbCI6InZvYmlsaXNldHRpdnl2YW50aDI4MTFAZ21haWwuY29tIiwibmV4cCI6MTc3ODA1OTU1NiwiaWF0IjoxNzc4MDU4NjU2LCJpc3MiOiJBZmZvcmQgTWVkaWNhbCBUZWNobm9sb2dpZXMgUHJpdmF0ZSBMaW1pdGVkIiwianRpIjoiNDJhOWI2YTctZmJkMS00ODdmLWE4ZTQtNDNiOTM1Nzg2MzljIiwibG9jYWxlIjoiZW4tSU4iLCJuYW1lIjoidm9iaWxpc2V0dGkgdnl2YW50aCIsInN1YiI6ImNlOGI4ZDQ1LTVhODEtNGI2ZS04NGMxLTMxYmI2NTBkMWFhNCJ9LCJlbWFpbCI6InZvYmlsaXNldHRpdnl2YW50aDI4MTFAZ21haWwuY29tIiwibmFtZSI6InZvYmlsaXNldHRpIHZ5dmFudGgiLCJyb2xsTm8iOiJibC5lbi51NGFpZDIzMDU2IiwiYWNjZXNzQ29kZSI6IlBUQk1tUSIsImNsaWVudElEIjoiY2U4YjhkNDUtNWE4MS00YjZlLTg0YzEtMzFiYjY1MGQxYWE0IiwiY2xpZW50U2VjcmV0IjoiamJFcXZoWHhoenlLWHVlUyJ9._rp0IlvbcZ6ad4eUkxUMvaeLYoe3OCbANBmOMMRni8E";
 
 const weights = {
   Placement: 3,
@@ -48,6 +50,13 @@ async function fetchNotifications() {
 
       await Log("frontend", "error", "api", errorMessage);
       console.error(errorMessage);
+
+      if (response.status === 401) {
+        console.error(
+          "Unauthorized: the API token is invalid or expired. Set NOTIFICATION_API_TOKEN with a valid token."
+        );
+      }
+
       return [];
     }
 
